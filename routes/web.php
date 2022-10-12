@@ -30,11 +30,8 @@ Route::get('/', function () {
 // compact('contacts') is equivalent to ['contacts' => $contacts]
 
 Route::get('/contacts', function () {
-
     $contacts = getContacts();
-
     return view('contacts.index', compact('contacts'));
-
 })->name('contacts.index');
 
 Route::get('/contacts/create', function () {
@@ -42,9 +39,11 @@ Route::get('/contacts/create', function () {
 })->name('contacts.create'); // to call route('contacts.create')
 
 Route::get('/contacts/{id}', function($id) {
-    return "Contact " . $id;
+    $contacts = getContacts();
+    abort_if(!isset($contacts[$id]), 404); //Validation for data in array of getContacts();
+    $contact = $contacts[$id];
+    return view('contacts.show')->with('contact', $contact);
 })->whereNumber('id')->name('contacts.show'); // ->where('id', '[0-9]+');
-
 
 Route::get('/companies/{name?}', function($name = null) {
     if ($name){
