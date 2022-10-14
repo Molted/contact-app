@@ -42,7 +42,8 @@ return [
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
-
+        // mysql -u root
+        // php artisan migrate:install
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
