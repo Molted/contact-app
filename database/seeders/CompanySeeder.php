@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
+
+// Faker Library is used for generating fake data.
 
 class CompanySeeder extends Seeder
 {
@@ -16,13 +19,14 @@ class CompanySeeder extends Seeder
     public function run()
     {
         $companies = [];
+        $faker = Faker::create();
 
         foreach (range(1, 10) as $index) {
             $company = [
-                'name' => $name = "Company $index",
-                'address' => "Address $name",
-                'website' => "Website $name",
-                'email' => "Email $name",
+                'name' => $faker->company(),
+                'address' => $faker->address(),
+                'website' => $faker->domainName(),
+                'email' => $faker->email(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
