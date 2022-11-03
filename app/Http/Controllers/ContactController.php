@@ -27,22 +27,20 @@ class ContactController extends Controller
     // {
     // }
 
-    public function index() {
-        // $companies = [
-        //     1 => ['name' => 'Company One', 'contacts' => 3],
-        //     2 => ['name' => 'Company Two', 'contacts' => 5],
-        // ];
+    public function index() 
+    {
         $companies = $this->company->pluck();
-        $contacts = Contact::latest()->get();
-        // $contacts = []; // empty value
+        $contacts = Contact::latest()->paginate(10);
         return view('contacts.index', compact('contacts', 'companies'));
     }
 
-    public function create() {
+    public function create()
+    {
         return view('contacts.create'); // contacts = the folder, create = the file
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $contact = Contact::findOrFail($id);
         return view('contacts.show')->with('contact', $contact);
     }
