@@ -30,15 +30,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($contacts as $id => $contact)
-                      @include('contacts._contact')                      
+                    @forelse ($contacts as $index => $contact)
+                      @include('contacts._contact', ['contact' => $contact, 'index' => $index])                    
                     @empty
                       @include('contacts._empty')
                     @endforelse
                 </tbody>
                 </table> 
 
-                {{ $contacts->links() }} {{-- PAGINATION NUMBER --}}
+                {{ $contacts->withQueryString()->links() }} {{-- PAGINATION NUMBER --}}
             </div>
           </div>
         </div>
