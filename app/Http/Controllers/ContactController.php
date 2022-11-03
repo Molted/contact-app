@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Repositories\CompanyRepository;
 use Illuminate\Http\Request;
+use App\Models\Contact;
 
 class ContactController extends Controller
 {
     // protected $company;
 
     // Option A
-    // public function __construct()
-    // {
-    //     $this->company = new CompanyRepository();
-    // }
+    public function __construct()
+    {
+        $this->company = new CompanyRepository();
+    }
 
     // Option B
     // public function __construct(CompanyRepository $company)
@@ -22,9 +23,9 @@ class ContactController extends Controller
     // }
 
     // Option C
-    public function __construct(protected CompanyRepository $company)
-    {
-    }
+    // public function __construct(protected CompanyRepository $company)
+    // {
+    // }
 
     public function index() {
         // $companies = [
@@ -32,7 +33,7 @@ class ContactController extends Controller
         //     2 => ['name' => 'Company Two', 'contacts' => 5],
         // ];
         $companies = $this->company->pluck();
-        $contacts = $this->getContacts();
+        $contacts = Contact::latest()->get();
         // $contacts = []; // empty value
         return view('contacts.index', compact('contacts', 'companies'));
     }
@@ -42,17 +43,7 @@ class ContactController extends Controller
     }
 
     public function show($id) {
-        $contacts = $this->getContacts();
-        abort_if(!isset($contacts[$id]), 404); //Validation for data in array of getContacts();
-        $contact = $contacts[$id];
+        $contact = Contact::findOrFail($id);
         return view('contacts.show')->with('contact', $contact);
-    }
-
-    protected function getContacts() {
-        return [
-            1 => ['name' => 'Name 1', 'phone' => '1234567890'],
-            2 => ['name' => 'Name 2', 'phone' => '2345678901'],
-            3 => ['name' => 'Name 3', 'phone' => '3456789012'],
-        ];
     }
 }
