@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Company::factory()->count(10)->create();
-        Contact::factory(100)->create();
+        //Factory Relationship of Company and Contact
+        Company::factory(10)->hasContacts(10)->create();
+        // Contact::factory(100)->create();
     }
 }

@@ -11,8 +11,16 @@ class Contact extends Model
 
     protected $fillable = ['first_name', 'last_name', 'phone', 'email', 'address'];
 
-    public function company() {
+    // Foreign Relationship - Many Contacts to 1 Company
+    public function company()
+    {
         return $this->belongsTo(Company::class);
+    }
+
+    // Foreign Relationship - 1 Contact to Many Tasks
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
     
 }
