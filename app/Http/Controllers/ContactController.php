@@ -36,21 +36,18 @@ class ContactController extends Controller
                 $query->where('company_id', $companyId);
             }
         })->paginate(10);
-        // $contactsCollection = Contact::latest()->get();
-        // $perPage = 10;
-        // $currentPage = request()->query('page', 1);
-        // $items = $contactsCollection->slice(($currentPage * $perPage) - $perPage, $perPage);
-        // $total = $contactsCollection->count();
-        // $contacts = new LengthAwarePaginator($items, $total, $perPage, $currentPage, [
-        //     'path' => request()->url(),
-        //     'query' => request()->query(),
-        // ]); Manual Pagination
         return view('contacts.index', compact('contacts', 'companies'));
     }
 
     public function create()
     {
-        return view('contacts.create'); // contacts = the folder, create = the file
+        $companies = $this->company->pluck();
+        return view('contacts.create', compact('companies')); // contacts = the folder, create = the file
+    }
+
+    public function store()
+    {
+        dd('Store');
     }
 
     public function show($id)

@@ -29,6 +29,7 @@ Route::get('/', WelcomeController::class); // <- singleAction controller
 
 Route::controller(ContactController::class)->name('contacts.')->group(function() {
     Route::get('/contacts', 'index')->name('index');
+    Route::post('/contacts', 'store')->name('store');
     Route::get('/contacts/create', 'create')->name('create'); // to call route('contacts.create') in the View
     Route::get('/contacts/{id}', 'show')->whereNumber('id')->name('show'); // ->where('id', '[0-9]+');
 });
