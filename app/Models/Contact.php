@@ -9,7 +9,7 @@ class Contact extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name', 'last_name', 'phone', 'email', 'address'];
+    protected $fillable = ['first_name', 'last_name', 'phone', 'email', 'address', 'company_id'];
 
     // Foreign Relationship - Many Contacts to 1 Company
     public function company()
