@@ -26,15 +26,7 @@ use Spatie\FlareClient\View;
 // public function __invoke() - if there's only a single action on a controller -> singleAction controller
 
 Route::get('/', WelcomeController::class); // <- singleAction controller
-
-Route::controller(ContactController::class)->name('contacts.')->group(function() {
-    Route::get('/contacts', 'index')->name('index');
-    Route::post('/contacts', 'store')->name('store');
-    Route::get('/contacts/create', 'create')->name('create'); // to call route('contacts.create') in the View
-    Route::get('/contacts/{id}', 'show')->whereNumber('id')->name('show'); // ->where('id', '[0-9]+');
-    Route::get('/contacts/{id}/edit', 'edit')->whereNumber('id')->name('edit');
-    Route::put('/contacts/{id}', 'update')->whereNumber('id')->name('update');
-});
+Route::resource('/contacts', ContactController::class); //Entire CRUD ContactController methods
 
 // Resources Controller - Section 6: No. 40
 Route::resource('/companies', CompanyController::class);
@@ -45,18 +37,8 @@ Route::resources([
 Route::resource('/activities', ActivityController::class)->except([
     'index', 'show'
 ]);
-
 // Nested Resource Controller
 Route::resource('/contacts.notes', ContactNoteController::class)->shallow();
-
-// Route::get('/companies/{name?}', function($name = null) {
-//     if ($name){
-//         return "Company " . $name;
-//     } else {
-//         return "All Companies";
-//     }
-// })->whereAlpha('name'); // ->where('name', '[a-zA-Z]+');
-
 Route::fallback(function() {
     return "<h1>Sorry, the page does not exist.</h1>";
 });
