@@ -32,6 +32,8 @@ Route::controller(ContactController::class)->name('contacts.')->group(function()
     Route::post('/contacts', 'store')->name('store');
     Route::get('/contacts/create', 'create')->name('create'); // to call route('contacts.create') in the View
     Route::get('/contacts/{id}', 'show')->whereNumber('id')->name('show'); // ->where('id', '[0-9]+');
+    Route::get('/contacts/{id}/edit', 'edit')->whereNumber('id')->name('edit');
+    Route::put('/contacts/{id}', 'update')->whereNumber('id')->name('update');
 });
 
 // Resources Controller - Section 6: No. 40
