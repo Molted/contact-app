@@ -17,17 +17,6 @@ class ContactController extends Controller
         $this->company = new CompanyRepository();
     }
 
-    // Option B
-    // public function __construct(CompanyRepository $company)
-    // {
-    //     $this->company = $company;
-    // }
-
-    // Option C
-    // public function __construct(protected CompanyRepository $company)
-    // {
-    // }
-
     public function index() 
     {
         $companies = $this->company->pluck();
@@ -36,19 +25,10 @@ class ContactController extends Controller
         {
             $query->onlyTrashed();
         }
-        $contacts = $query->latest()->where(function($query) { //Searching data by Companies
-            if ($companyId = request()->query('company_id'))
-            {
-                $query->where('company_id', $companyId);
-            }            
-        })->where(function($query) { //Searching data by inputs of the searchbox
-            if ($search = request()->query('search'))
-            {
-                $query->where("first_name", "LIKE", "%{$search}%");
-                $query->orWhere("last_name", "LIKE", "%{$search}%");
-                $query->orWhere("email", "LIKE", "%{$search}%");
-            }
-        })->paginate(10);
+        $contacts = $query->allowedSorts('last_name')
+            ->allowedFilters('company_id')
+            ->allowedSearch(['first_name', 'last_name', 'email'])
+            ->paginate(10);
         return view('contacts.index', compact('contacts', 'companies'));
     }
 
