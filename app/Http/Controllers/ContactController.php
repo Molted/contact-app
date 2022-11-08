@@ -20,14 +20,11 @@ class ContactController extends Controller
     public function index() 
     {
         $companies = $this->company->pluck();
-        $query = Contact::query();
-        if (request()->query('trash'))
-        {
-            $query->onlyTrashed();
-        }
-        $contacts = $query->allowedSorts('last_name')
+        
+        $contacts = Contact::allowedTrash()
+            ->allowedSorts('last_name')
             ->allowedFilters('company_id')
-            ->allowedSearch(['first_name', 'last_name', 'email'])
+            ->allowedSearch('first_name', 'last_name', 'email')
             ->paginate(10);
         return view('contacts.index', compact('contacts', 'companies'));
     }
