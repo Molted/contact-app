@@ -66,7 +66,7 @@ class ContactController extends Controller
             'company_id' => 'required|exists:companies,id'
         ]);
         Contact::create($request->all());
-        return redirect()->route('contacts.index')->with('message', 'Contact has been added successfully');   
+        return redirect()->route('contacts.index')->with('message', 'Contact has been added successfully.');   
     }
 
     public function show($id)
@@ -94,13 +94,32 @@ class ContactController extends Controller
             'company_id' => 'required|exists:companies,id'
         ]);
         $contact->update($request->all());
-        return redirect()->route('contacts.index')->with('message', 'Contact has been updated successfully');
+        return redirect()->route('contacts.index')->with('message', 'Contact has been updated successfully.');
     }
 
     public function destroy($id)
     {
         $contact = Contact::findOrFail($id);
         $contact->delete();
-        return redirect()->route('contacts.index')->with('message', 'Contact has been removed successfully');
+        return redirect()->route('contacts.index')
+            ->with('message', 'Contact has been moved to trash.')
+            ->with('undoRoute', route('contacts.restore', $contact->id));
+    }
+
+    public function restore($id)
+    {
+        $contact = Contact::onlyTrashed()->findOrFail($id);
+        $contact->restore();
+        return back()
+            ->with('message', 'Contact has been restored from trash.')
+            ->with('undoRoute', route('contacts.destroy', $contact->id));
+    }
+
+    public function forceDelete($id)
+    {
+        $contact = Contact::onlyTrashed()->findOrFail($id);
+        $contact->forceDelete();
+        return back()
+            ->with('message', 'Contact has been removed permanently.');
     }
 }

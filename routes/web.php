@@ -27,7 +27,8 @@ use Spatie\FlareClient\View;
 
 Route::get('/', WelcomeController::class); // <- singleAction controller
 Route::resource('/contacts', ContactController::class); //Entire CRUD ContactController methods
-
+Route::delete('/contacts/{contact}/restore', [ContactController::class, 'restore'])->name('contacts.restore');
+Route::delete('/contacts/{contact}/force-delete', [ContactController::class, 'forceDelete'])->name('contacts.force-delete');
 // Resources Controller - Section 6: No. 40
 Route::resource('/companies', CompanyController::class);
 Route::resources([
