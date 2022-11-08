@@ -31,7 +31,12 @@ class ContactController extends Controller
     public function index() 
     {
         $companies = $this->company->pluck();
-        $contacts = Contact::latest()->where(function($query) { //Searching data by Companies
+        $query = Contact::query();
+        if (request()->query('trash'))
+        {
+            $query->onlyTrashed();
+        }
+        $contacts = $query->latest()->where(function($query) { //Searching data by Companies
             if ($companyId = request()->query('company_id'))
             {
                 $query->where('company_id', $companyId);
@@ -101,7 +106,8 @@ class ContactController extends Controller
     {
         $contact = Contact::findOrFail($id);
         $contact->delete();
-        return redirect()->route('contacts.index')
+        $redirect = request()->query('redirect'); // 'redirect' = contacts.index from Contact Show View
+        return ($redirect ? redirect()->route($redirect) : back())
             ->with('message', 'Contact has been moved to trash.')
             ->with('undoRoute', route('contacts.restore', $contact->id));
     }
