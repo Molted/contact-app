@@ -109,7 +109,7 @@ class ContactController extends Controller
         $redirect = request()->query('redirect'); // 'redirect' = contacts.index from Contact Show View
         return ($redirect ? redirect()->route($redirect) : back())
             ->with('message', 'Contact has been moved to trash.')
-            ->with('undoRoute', route('contacts.restore', $contact->id));
+            ->with('undoRoute',  $this->getUndoRoute('contacts.restore', $contact));
     }
 
     public function restore($id)
@@ -118,7 +118,12 @@ class ContactController extends Controller
         $contact->restore();
         return back()
             ->with('message', 'Contact has been restored from trash.')
-            ->with('undoRoute', route('contacts.destroy', $contact->id));
+            ->with('undoRoute', $this->getUndoRoute('contacts.destroy', $contact));
+    }
+
+    protected function getUndoRoute($name, $resource)
+    {
+        return request()->missing('undo') ? route($name, [$resource->id, 'undo' => true]) : null;
     }
 
     public function forceDelete($id)
