@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
 use App\Repositories\CompanyRepository;
 use Illuminate\Http\Request;
 use App\Models\Contact;
@@ -39,51 +40,31 @@ class ContactController extends Controller
         return view('contacts.create', compact('companies', 'contact')); // contacts = the folder, create = the file
     }
 
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {     
-        $request->validate([
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'email' => 'required|email',
-            'phone' => 'nullable',
-            'address' => 'nullable',
-            'company_id' => 'required|exists:companies,id'
-        ]);
         Contact::create($request->all());
         return redirect()->route('contacts.index')->with('message', 'Contact has been added successfully.');   
     }
 
-    public function show($id)
+    public function show(Contact $contact) // Implicit Binding
     {
-        $contact = Contact::findOrFail($id);
         return view('contacts.show')->with('contact', $contact);
     }
 
-    public function edit($id)
+    public function edit(Contact $contact) // Implicit Binding
     {
         $companies = $this->company->pluck();
-        $contact = Contact::findOrFail($id);
         return view('contacts.edit', compact('companies', 'contact'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ContactRequest $request, Contact $contact)
     {
-        $contact = Contact::findOrFail($id);
-        $request->validate([
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'email' => 'required|email',
-            'phone' => 'nullable',
-            'address' => 'nullable',
-            'company_id' => 'required|exists:companies,id'
-        ]);
         $contact->update($request->all());
         return redirect()->route('contacts.index')->with('message', 'Contact has been updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Contact $contact) // Implicit Binding
     {
-        $contact = Contact::findOrFail($id);
         $contact->delete();
         $redirect = request()->query('redirect'); // 'redirect' = contacts.index from Contact Show View
         return ($redirect ? redirect()->route($redirect) : back())
@@ -91,9 +72,8 @@ class ContactController extends Controller
             ->with('undoRoute',  $this->getUndoRoute('contacts.restore', $contact));
     }
 
-    public function restore($id)
+    public function restore(Contact $contact) // Implicit Binding
     {
-        $contact = Contact::onlyTrashed()->findOrFail($id);
         $contact->restore();
         return back()
             ->with('message', 'Contact has been restored from trash.')
@@ -105,9 +85,8 @@ class ContactController extends Controller
         return request()->missing('undo') ? route($name, [$resource->id, 'undo' => true]) : null;
     }
 
-    public function forceDelete($id)
+    public function forceDelete(Contact $contact) // Implicit Binding
     {
-        $contact = Contact::onlyTrashed()->findOrFail($id);
         $contact->forceDelete();
         return back()
             ->with('message', 'Contact has been removed permanently.');
