@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactNoteController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WelcomeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\FlareClient\View;
 
@@ -47,3 +48,6 @@ Route::resource('/contacts.notes', ContactNoteController::class)->shallow();
 Route::fallback(function() {
     return "<h1>Sorry, the page does not exist.</h1>";
 });
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
