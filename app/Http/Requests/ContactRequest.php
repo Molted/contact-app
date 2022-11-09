@@ -32,4 +32,20 @@ class ContactRequest extends FormRequest
             'company_id' => 'required|exists:companies,id'
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'company_id' => 'company',
+            'email' => 'email address'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.email' => 'The email that you entered is not valid',
+            '*.required' => ':attribute cannot be empty',
+        ];
+    }
 }
