@@ -6,7 +6,6 @@ use App\Http\Requests\ContactRequest;
 use App\Repositories\CompanyRepository;
 use Illuminate\Http\Request;
 use App\Models\Contact;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class ContactController extends Controller
@@ -17,14 +16,15 @@ class ContactController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
-        $this->company = new CompanyRepository();
+        // $this->company = new CompanyRepository();
     }
 
     public function index() 
     {
-        $companies = $this->company->pluck();
+        $user = auth()->user();
         // DB::enableQueryLog();
-        $contacts = Contact::allowedTrash()
+        $companies = $user->companies()->orderBy('name')->pluck('name', 'id');
+        $contacts = $user->contacts()->allowedTrash()
             ->allowedSorts(['first_name', 'last_name', 'email'], "-id")
             ->allowedFilters('company_id')
             ->allowedSearch('first_name', 'last_name', 'email')
@@ -35,7 +35,7 @@ class ContactController extends Controller
 
     public function create()
     {
-        $companies = $this->company->pluck();
+        $companies = auth()->user()->companies()->orderBy('name')->pluck('name', 'id');
         $contact = new Contact();
 
         return view('contacts.create', compact('companies', 'contact')); // contacts = the folder, create = the file
@@ -43,7 +43,7 @@ class ContactController extends Controller
 
     public function store(ContactRequest $request)
     {     
-        Contact::create($request->all());
+        $request->user()->contacts()->create($request->all());
         return redirect()->route('contacts.index')->with('message', 'Contact has been added successfully.');   
     }
 
@@ -54,7 +54,7 @@ class ContactController extends Controller
 
     public function edit(Contact $contact) // Implicit Binding
     {
-        $companies = $this->company->pluck();
+        $companies = auth()->user()->companies()->orderBy('name')->pluck('name', 'id');
         return view('contacts.edit', compact('companies', 'contact'));
     }
 

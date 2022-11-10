@@ -13,7 +13,7 @@ class Contact extends Model
 {
     use HasFactory, SoftDeletes, AllowedSort, AllowedFilterSearch;
 
-    protected $fillable = ['first_name', 'last_name', 'phone', 'email', 'address', 'company_id'];
+    protected $fillable = ['first_name', 'last_name', 'phone', 'email', 'address', 'company_id', 'user_id'];
 
     // Foreign Relationship - Many Contacts to 1 Company
     public function company()
@@ -25,5 +25,10 @@ class Contact extends Model
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
