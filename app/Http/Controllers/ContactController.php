@@ -16,7 +16,7 @@ class ContactController extends Controller
     // Option A
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
         $this->company = new CompanyRepository();
     }
 

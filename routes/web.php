@@ -48,6 +48,6 @@ Route::resource('/contacts.notes', ContactNoteController::class)->shallow();
 Route::fallback(function() {
     return "<h1>Sorry, the page does not exist.</h1>";
 });
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
