@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\AccountController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContactController;
@@ -34,6 +35,7 @@ Route::delete('/contacts/{contact}/restore', [ContactController::class, 'restore
 Route::delete('/contacts/{contact}/force-delete', [ContactController::class, 'forceDelete'])
     ->name('contacts.force-delete')
     ->withTrashed();
+
 // Resources Controller - Section 6: No. 40
 Route::resource('/companies', CompanyController::class);
 Route::resources([
@@ -45,9 +47,13 @@ Route::resource('/activities', ActivityController::class)->except([
 ]);
 // Nested Resource Controller
 Route::resource('/contacts.notes', ContactNoteController::class)->shallow();
+
 Route::fallback(function() {
     return "<h1>Sorry, the page does not exist.</h1>";
 });
-Auth::routes(['verify' => true]);
 
+Auth::routes(['verify' => true]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+//Account Route - has Confirm Password
+Route::get('/settings/account', [AccountController::class, 'index']);
