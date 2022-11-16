@@ -22,7 +22,7 @@
                 </div>
               </div>
             <div class="card-body">
-                {{-- @include('companies._filter') --}}
+                @include('companies._filter')
                 @if ($message = session('message'))
                     <div class="alert alert-success">
                       {{ $message }}

@@ -7,14 +7,14 @@
         <div class="col-md-8">
           <div class="card">
             <div class="card-header card-title">
-              <strong>Edit Contact</strong>
+              <strong>Edit Company</strong>
             </div>           
             <div class="card-body">
-              <form action="{{ route('contacts.update', $contact->id) }}" method="POST">
+              <form action="{{ route('companies.update', $company->id) }}" method="POST">
                 {{-- @csrf OR <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
                 @csrf
                 @method('put')
-                @include('contacts._form')
+                @include('companies._form')
               </form>
             </div>
           </div>
@@ -24,4 +24,4 @@
   </main>
 @endsection
 
-@section('title', 'Contact App | Edit contact')
+@section('title', 'Contact App | Edit company')

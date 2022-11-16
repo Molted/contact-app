@@ -38,6 +38,13 @@ Route::delete('/contacts/{contact}/force-delete', [ContactController::class, 'fo
 
 // Resources Controller - Section 6: No. 40
 Route::resource('/companies', CompanyController::class);
+Route::delete('/companies/{company}/restore', [CompanyController::class, 'restore'])
+    ->name('companies.restore')
+    ->withTrashed(); // To retrieve the soft deleted models (This is used when doing Implicit Binding)
+Route::delete('/companies/{company}/force-delete', [CompanyController::class, 'forceDelete'])
+    ->name('companies.force-delete')
+    ->withTrashed();
+
 Route::resources([
     '/tags' => TagController::class,
     '/tasks' => TaskController::class

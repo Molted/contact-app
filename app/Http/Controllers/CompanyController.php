@@ -19,7 +19,12 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = auth()->user()->companies()->latest()->paginate(10);
+        $user = auth()->user();
+
+        $companies = $user->companies()->allowedTrash()
+            ->allowedSorts(['name', 'address', 'email'], "-id")
+            ->allowedSearch('name', 'address', 'email', 'website')
+            ->paginate(10);
 
         return view('companies.index', compact('companies'));
     }
@@ -94,7 +99,30 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         $company->delete();
-
-        return back()->with('message', "Company has been removed successfully");
+        $redirect = request()->query('redirect'); // 'redirect' = companies.index from Company Show View
+        return ($redirect ? redirect()->route($redirect) : back()) // redirect()... is for deleting in Show View, while back() is for deleting in Index View
+            ->with('message', 'Company has been moved to trash.')
+            ->with('undoRoute',  $this->getUndoRoute('companies.restore', $company));
     }
+
+    public function restore(Company $company) // Implicit Binding
+    {
+        $company->restore();
+        return back()
+            ->with('message', 'Company has been restored from trash.')
+            ->with('undoRoute', $this->getUndoRoute('companies.destroy', $company));
+    }
+
+    protected function getUndoRoute($name, $resource)
+    {
+        return request()->missing('undo') ? route($name, [$resource->id, 'undo' => true]) : null;
+    }
+
+    public function forceDelete(Company $company) // Implicit Binding
+    {
+        $company->forceDelete();
+        return back()
+            ->with('message', 'Company has been removed permanently.');
+    }
+
 }
