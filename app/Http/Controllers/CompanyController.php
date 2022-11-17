@@ -19,11 +19,10 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-
-        $companies = $user->companies()->allowedTrash()
+        $companies = Company::allowedTrash()
             ->allowedSorts(['name', 'address', 'email'], "-id")
             ->allowedSearch('name', 'address', 'email', 'website')
+            ->forUser(auth()->user())
             ->paginate(10);
 
         return view('companies.index', compact('companies'));

@@ -16,18 +16,23 @@ class ContactController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'verified']);
-        // $this->company = new CompanyRepository();
+        $this->company = new CompanyRepository();
+    }
+
+    protected function userCompanies()
+    {
+        return $this->company->pluck(auth()->user());
     }
 
     public function index() 
     {
-        $user = auth()->user();
         // DB::enableQueryLog();
-        $companies = $user->companies()->orderBy('name')->pluck('name', 'id');
-        $contacts = $user->contacts()->allowedTrash()
+        $companies = $this->userCompanies();
+        $contacts = Contact::allowedTrash()
             ->allowedSorts(['first_name', 'last_name', 'email'], "-id")
             ->allowedFilters('company_id')
             ->allowedSearch('first_name', 'last_name', 'email')
+            ->forUser(auth()->user())
             ->paginate(10);
         // dump(DB::getQueryLog());
         return view('contacts.index', compact('contacts', 'companies'));
@@ -35,7 +40,7 @@ class ContactController extends Controller
 
     public function create()
     {
-        $companies = auth()->user()->companies()->orderBy('name')->pluck('name', 'id');
+        $companies = $this->userCompanies();
         $contact = new Contact();
 
         return view('contacts.create', compact('companies', 'contact')); // contacts = the folder, create = the file
@@ -43,7 +48,7 @@ class ContactController extends Controller
 
     public function store(ContactRequest $request)
     {     
-        $request->user()->contacts()->create($request->all());
+        $request->user()->contacts()->create($request->validated());
         return redirect()->route('contacts.index')->with('message', 'Contact has been added successfully.');   
     }
 
@@ -54,7 +59,7 @@ class ContactController extends Controller
 
     public function edit(Contact $contact) // Implicit Binding
     {
-        $companies = auth()->user()->companies()->orderBy('name')->pluck('name', 'id');
+        $companies = $this->userCompanies();
         return view('contacts.edit', compact('companies', 'contact'));
     }
 
